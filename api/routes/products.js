@@ -1,48 +1,48 @@
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-unused-vars */
 const express = require('express');
+
 const router = express.Router();
 const mongoose = require('mongoose');
 
 // import mongoose elemtent product
-const Product = require('../models/product');
-
+const Product = require('../models/product.js');
 
 // GET METHOD
 router.get('/', (req, res, next) => {
   Product.find()
     .exec()
-    .then(docs => {
+    .then((docs) => {
       console.log(docs);
-      res.status(200).json(docs)
+      res.status(200).json(docs);
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
       res.status(500).json({
-        error: err
-      })
-    })
+        error: err,
+      });
+    });
 });
-
 
 // POST METHOD
 router.post('/', (req, res, next) => {
-
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
-    price: req.body.price
+    price: req.body.price,
   });
   product.save()
-    .then(result => {
+    .then((result) => {
       console.log(result);
       res.status(200).json({
         message: `Product ${req.body.name} created succesffuly`,
-        createdProduct: product
+        createdProduct: product,
       });
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
       res.status(500).json({
-        error: err
+        error: err,
       });
     });
 });
@@ -52,16 +52,16 @@ router.get('/:productId', (req, res, next) => {
   const id = req.params.productId;
   Product.findById(id)
     .exec()
-    .then(doc => {
-      console.log("From database", doc);
+    .then((doc) => {
+      console.log('From database', doc);
       if (doc) {
-        res.status(200).json(doc)
+        res.status(200).json(doc);
       } else {
-        res.status(404).json({ message: `invlid entry for this ID` });
+        res.status(404).json({ message: 'invlid entry for this ID' });
       }
       res.status(200).json(doc);
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
       res.status(500).json({ error: err });
     });
@@ -74,34 +74,33 @@ router.patch('/:productId', (req, res, next) => {
   for (const ops of req.body) {
     updateOps[ops.propName] = ops.value;
   }
-  Product.updateOne({ _id: id }, { $set: updateOps})
+  Product.updateOne({ _id: id }, { $set: updateOps })
     .exec()
-    .then( result => {
+    .then((result) => {
       res.status(200).json(result);
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
       res.status(500).json({
-        error: err
+        error: err,
       });
     });
 });
-
 
 // DELETE
 router.delete('/:productId', (req, res, next) => {
   const id = req.params.productId;
   Product.deleteOne({ _id: id })
     .exec()
-    .then(result => {
+    .then((result) => {
       res.status(200).json(result);
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
       res.status(500).json({
-        error: err
+        error: err,
       });
-    })
+    });
 });
 
 module.exports = router;

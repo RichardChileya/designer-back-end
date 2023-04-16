@@ -1,10 +1,10 @@
 // connect to mongoose for db connections
 const mongoose = require('mongoose');
 
-// create a table connection 
+// create a table connection
 const orderSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
-  quantity: Number
+  quantity: Number,
 });
 
-module.exports = mongoose.model("Order", orderSchema);
+module.exports = mongoose.model('Order', orderSchema);
