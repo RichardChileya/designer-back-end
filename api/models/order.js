@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 // create a table connection
 const orderSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
-  quantity: Number,
+  product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+  quantity: { type: Number, default: 1 },
 });
 
 module.exports = mongoose.model('Order', orderSchema);
