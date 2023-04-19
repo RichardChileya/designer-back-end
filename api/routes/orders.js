@@ -69,7 +69,6 @@ router.post('/', (req, res, next) => {
         });
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).json({
         message: 'Ptoduct Not Found',
         error: err,
