@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-unused-vars */
 const express = require('express');
@@ -5,6 +6,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const multer = require('multer');
+const checkAuth = require('../middleware/check-auth.js');
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
@@ -63,12 +65,14 @@ router.get('/', (req, res, next) => {
 });
 
 // POST METHOD
-router.post('/', upload.single('productImage'), (req, res, next) => {
+router.post('/', checkAuth, upload.single('productImage'), (req, res, next) => {
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
     price: req.body.price,
     productImage: req.file.path,
+    description: req.body.description,
+    status: req.body.status,
   });
   product.save()
     .then((result) => {
@@ -78,6 +82,8 @@ router.post('/', upload.single('productImage'), (req, res, next) => {
           _id: result.id,
           name: result.name,
           price: result.price,
+          description: result.description,
+          status: result.status,
           request: {
             type: 'GET',
             url: `http://localhost:3000/products/${result.id}`,
@@ -96,7 +102,7 @@ router.post('/', upload.single('productImage'), (req, res, next) => {
 router.get('/:productId', (req, res, next) => {
   const id = req.params.productId;
   Product.findById(id)
-    .select('name price _id productImage')
+    .select('name price _id productImage status description')
     .exec()
     .then((doc) => {
       if (doc) {
@@ -119,7 +125,7 @@ router.get('/:productId', (req, res, next) => {
 });
 
 // PATCH
-router.patch('/:productId', (req, res, next) => {
+router.patch('/:productId', checkAuth, (req, res, next) => {
   const id = req.params.productId;
   const updateOps = {};
   for (const ops of req.body) {
@@ -144,7 +150,7 @@ router.patch('/:productId', (req, res, next) => {
 });
 
 // DELETE
-router.delete('/:productId', (req, res, next) => {
+router.delete('/:productId', checkAuth, (req, res, next) => {
   const id = req.params.productId;
   Product.deleteOne({ _id: id })
     .exec()
